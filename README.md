@@ -1,18 +1,16 @@
-# Template for software repositories by the Caltech Library
+# ts_dataset a TypeScript module for working with datasetd
 
-This is a template README file for software repositories. This first paragraph of the README should summarize your software in a concise fashion, preferably using no more than one or two sentences.
+The [dataset project](https://github.com/caltechlibrary/dataset) provides a JSON API for JSON object storage via the datasetd application. This repository hosts a TypeScript module targetting [Deno](https://deno.land) for integrating datasetd JSON API managed dataset collections.
 
-[![License](https://img.shields.io/badge/License-BSD--like-lightgrey)](https://github.com/caltechlibrary/template/blob/main/LICENSE)
-[![Latest release](https://img.shields.io/github/v/release/caltechlibrary/template.svg?color=b44e88)](https://github.com/caltechlibrary/template/releases)
-[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&colorA=gray&colorB=navy&query=$.pids.doi.identifier&uri=https://data.caltech.edu/api/records/1n20b-6y141/versions/latest)](https://data.caltech.edu/records/1n20b-6y141/latest)
-
+[![License](https://img.shields.io/badge/License-BSD--like-lightgrey)](https://github.com/caltechlibrary/ts_dataset/blob/main/LICENSE)
+[![Latest release](https://img.shields.io/github/v/release/caltechlibrary/ts_dataset.svg?color=b44e88)](https://github.com/caltechlibrary/ts_dataset/releases)
 
 ## Table of contents
 
 * [Introduction](#introduction)
 * [Installation](#installation)
-* [Quick start](#quick-start)
-* [Usage](#usage)
+* [Requirements](#requirements)
+* [Run demo](#run-demo)
 * [Known issues and limitations](#known-issues-and-limitations)
 * [Getting help](#getting-help)
 * [Contributing](#contributing)
@@ -22,64 +20,114 @@ This is a template README file for software repositories. This first paragraph o
 
 ## Introduction
 
-This repository is a GitHub template repository for creating software project repositories at the Caltech Library. The [associated wiki page](https://github.com/caltechlibrary/template/wiki/Using-this-template-repo) explains how to use the template repository.
+The TypeScript **ts_dataset** module is for working with the JSON API provided by [datasetd](https://caltechlibrary.github.io/dataset/datasetd_api.5.html). There are two explorted classes defined -- `DatasetApiClient` and `Dataset`. The first is a low level HTTP wrapper mapping basic dataset verbs to the JSON API. The later provides those verbs where the objects are TypeScript based. Most applications using dataset collections hosted via datasetd will use the latter class.
 
-This README file is in Markdown format, and is meant to provide a template for README files as well an illustration of what the README file can be expected to look like. For a software project, this [Introduction](#introduction) section &ndash; which you are presently reading &ndash; should summarize in general terms what the software does, the need(s) it addresses, the programming language(s) it's written in, and optionally, links to other resources that can help orient readers. Ideally, this section should be short and use plain language. Keep in mind that not all readers who happen upon your project will be familiar with the topic area.
+Here's a simple example of exercising some of the method available with the Dataset object. This demo code assumes datasetd running on localhost on port 8485 and a dataset set collection called "my_objects.ds" has been defined the in YAML configuration of datasetd.
 
+~~~typescript
+import { Dataset } from "caltechlibrary.github.io/ts_dataset/mods.ts"
+/* for a local copy use: import { Dataset } from "./mod.ts" */
+
+const port = 8485;
+const c_name = "my_objects.ds";
+
+const ds = new Dataset(port, c_name);
+
+// Get a list of keys 
+let keys = await ds.keys();
+if (keys === undefined) {
+    throw new Error("Something went wrong, no keys!");
+}
+console.log(`there are ${keys.length} found in ${c_name}`);
+// Create a new object
+let key = "object_three";
+let obj = {
+    "three": 3,
+    "four": "four",
+    "five": true,
+    "updated": (new Date).toISOString()
+};
+
+ds.create(key, obj);
+keys = await ds.keys()
+console.log(`there are now ${keys.length} found in ${c_name}`);
+
+// Read back an object
+let nObj = await ds.read(key);
+console.log(`this is the read object ${nObj}`);
+
+// Update our object.
+obj.updated = (new Date).toLocaleString();
+ds.update(key, obj);
+
+// Read back updated object
+nObj = await ds.read(key);
+console.log(`this is the now our object ${nObj}`);
+
+// Remove our object
+ds.delete(key);
+
+keys = await ds.keys()
+console.log(`there are now ${keys.length} found in ${c_name}`);
+~~~
 
 ## Installation
 
-Begin this section by mentioning prerequisites that may be important for users to have before they can use your software. Examples include required hardware, operating systems, and software frameworks.
+The latest release of `ts_dataset` is hosted on Caltech Library's GitHub website at <https://caltechlibrary.github.io/ts_dataset>. You can
+add it to your `deps.ts` file with a line like.
 
-Next, provide step-by-step instructions for installing your software, preferably with examples of commands that can be copy-pasted by readers into their computing environments. If your software can be installed using common installers or package managers (e.g., `pip`, `npm`, `brew`, `apt`, etc.), illustrate how it can be done using [code blocks](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-and-highlighting-code-blocks) in the Markdown file so that it's clear to readers. For example,
+~~~typescript
+export * from "https://caltechlibrary.github.io/ts_dataset/mods.ts";
+~~~
 
-```sh
-pip install yoursoftware
-```
+You can also clone the Git repository and include it locally. The Git repository is hosted at <https://github.com/caltechlibrary/ts_dataset>.
 
-For installation methods that don't involve command lines, try to provide screenshots along with written instructions to help readers figure out what they need to do.
+You will need `datasetd` running for the module to be useful. Find out more about `datasetd` at <https://caltechlibrary.github.io/dataset>.
 
-Subsections may be appropriate within this [Installation](#installation) section for different operating systems or particularly complicated installations. Keep in mind, though, that the more complicated the installation process is, the more likely that users will encounter difficulties and give up.
+## Requirements
 
+- [dataset](https://github.com/caltechlibrary/dataset/releases)) >= 2.1.13, provides datasetd
+- [deno](https://deno.land) >= 1.44
+- [tmux](https://github.com/tmux/tmux/wiki) (recommended for running the demo)
+- To generation or release ts_dataaset you need the following
+  - [pandoc](https://pandoc.org) > 3.1
+  - [GNU Make](https://www.gnu.org/software/make/)
+  - [PageFind](https://pagefind.app)
 
-## Quick start
+To generate the website content clone this repository then run "make".
 
-Nobody wants to read long explanations about how to use your software before they can try it, especially while they are still trying to decide _whether_ to try it at all. A [Quick start](#quick-start) section right after the installation instructions helps readers figure out what's involved.
+## Run demo
 
-Explain the minimal configuration (if any) required to start using the software, then provide the simplest example or command that demonstrates actual functionality implemented by your software. If your software is command-line oriented, provide examples (again using [code blocks](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-and-highlighting-code-blocks) in the Markdown file).
+I use tmux to run the [demo](demo_ts_dataset.ts). It's convient. I start with one window and get everything setup and startup datasetd using a Deno task. Then I split the window and run the demo.  Below is what I type to run the demo (comments indicate where to switch windows, explain actions).
 
-```sh
-yoursoftware argument1 argument2
-```
-
-If your software is not command-line oriented, try to provide screenshots &ndash; preferably annotated with arrows or other guidance &ndash; to show readers how to use the software.
-
-If possible, avoid animated GIFs or video tutorials, for the following reasons: users who turn off animations in their browsers may not even see them, videos hosted on other platforms may disappear over time, videos take more time to keep updated as your software changes, and (at least in this author's experience) a sizeable number of people dislike video tutorials and won't play them anyway.
-
-
-## Usage
-
-This [Usage](#usage) section would explain more about how to run the software, what kind of behavior to expect, and so on.
-
-Begin with the simplest possible example of how to use your software. Provide example command lines and/or screen images, as appropriate, to help readers understand how the software is expected to be used. Many readers are likely to look for command lines they can copy-paste directly from your explanations, so it's best to keep that in mind as you write examples.
-
-Some projects need to communicate additional information to users and can benefit from additional sections in the README file. Use subsections as needed. It's difficult to give specific instructions &ndash; a lot depends on your software, your intended audience, etc. Use your judgment and ask for feedback from users or colleagues to help figure out what else is worth explaining.
-
+~~~shell
+# Start up tmux
+tmux
+# clone this repository and change directory
+git clone https://github.com/caltechlibrary/ts_dataset
+cd ts_dataset
+# Use deno tasks to setup our test and demo dataset collections
+deno task setup_datasets
+# Start the datasetd
+deno task run_datasetd
+# Split the tmux window (e.g. Ctrl-b ") and run the demo
+deno task demo
+~~~
 
 ## Known issues and limitations
 
-In this section, summarize any notable issues and/or limitations of your software. If none are known yet, this section can be omitted (and don't forget to remove the corresponding entry in the [Table of Contents](#table-of-contents) too); alternatively, you can leave this section in and write something along the lines of "none are known at this time".
-
+- this is a proof of concept only
+- only has small subset of dataset features
+- it is very experimental and subject to change
+- it is not suitable for production
 
 ## Getting help
 
-Inform readers of how they can contact you, or at least how they can report problems they may encounter. This may simply be a request to use the issue tracker on your repository, but many projects have associated chat or mailing lists, and this section is a good place to mention those.
-
+You can file a GitHub [issue](https://github.com/caltechlibrary/ts_dataset/issues) or reach out to the authors listed in the [codemeta.json](codemeta.json) file. See [SUPPORT](SUPPORT.md) file in this repository.
 
 ## Contributing
 
-This section is optional. If your project accepts open-source contributions, this is where you can welcome contributions and explain to readers how they can go about it. It can be as simple as pointing people to a [`CONTRIBUTING.md`](CONTRIBUTING.md) file in your repository.
-
+Contributions and help are welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md) file in this repository.
 
 ## License
 
@@ -87,8 +135,6 @@ Software produced by the Caltech Library is Copyright © 2024 California Institu
 
 
 ## Acknowledgments
-
-This final section is where you should acknowledge funding and/or institutional support, prior work that influenced or inspired your project, resources that you used (such as other people's software), important contributions from other people, and anything else that deserves mention. After all, nothing is truly done in isolation; everything is built on top of something, and we all owe debts to other projects and people who helped us, supported us, and influenced us.
 
 This work was funded by the California Institute of Technology Library.
 

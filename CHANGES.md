@@ -1,7 +1,6 @@
-# Change log for REPOSITORY
 
-## Version 0.0.0
+# Change log for ts_dataset
 
-* Write about a change here
-* Write about another change here
-* Write about a 3rd change
+## Version 0.0.1
+
+- Working proof of concept

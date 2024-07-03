@@ -1,0 +1,48 @@
+#
+# test_dataset.yaml defines the datasetd configuration to test
+# ts_dataset.ts. 
+# 
+# @author: R. S. Doiel <rsdoiel@caltech.edu>
+#
+host: localhost:8485
+collections:
+  - dataset: test_dataset.ds
+    # This is a test query which returns our test object.
+    query:
+      list_item: select src from test;
+    # What follows are object level permissions
+    keys: true
+    create: true
+    read: true
+    update: true
+    delete: true
+    # These are attachment related permissions
+    attachments: false
+    attach: false
+    retrieve: false
+    prune: false
+    # These are frame level permissions
+    frame_read: false
+    frame_write: false
+    # This sets versioning behavior
+    versions: true
+  - dataset: my_objects.ds
+    # This is a test query which returns our test object.
+    query:
+      list_item: select src from test;
+    # What follows are object level permissions
+    keys: true
+    create: true
+    read: true
+    update: true
+    delete: true
+    # These are attachment related permissions
+    attachments: false
+    attach: false
+    retrieve: false
+    prune: false
+    # These are frame level permissions
+    frame_read: false
+    frame_write: false
+    # This sets versioning behavior
+    versions: true

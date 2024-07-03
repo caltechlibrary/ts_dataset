@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ts_dataset</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://caltechlibrary.github.io/css/site.css">
+</head>
+<body>
+<header>
+<a href="http://library.caltech.edu" title="link to Caltech Library Homepage"><img src="https://caltechlibrary.github.io/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="index.html">README</a></li>
+    <li><a href="LICENSE">LICENSE</a></li>
+    <li><a href="install.html">INSTALL</a></li>
+	<li><a href="SUPPORT.html">SUPPORT</a></li>
+	<li><a href="CONTRIBUTING.html">CONTRIBUTING</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="https://github.com/caltechlibrary/ts_dataset">GitHub</a></li>
+</ul>
+</nav>
+
+<section>
+<h1
+id="ts_dataset-a-typescript-module-for-working-with-datasetd">ts_dataset
+a TypeScript module for working with datasetd</h1>
+<p>The <a href="https://github.com/caltechlibrary/dataset">dataset
+project</a> provides a JSON API for JSON object storage via the datasetd
+application. This repository hosts a TypeScript module targetting <a
+href="https://deno.land">Deno</a> for integrating datasetd JSON API
+managed dataset collections.</p>
+<p><a
+href="https://github.com/caltechlibrary/ts_dataset/blob/main/LICENSE"><img
+src="https://img.shields.io/badge/License-BSD--like-lightgrey"
+alt="License" /></a> <a
+href="https://github.com/caltechlibrary/ts_dataset/releases"><img
+src="https://img.shields.io/github/v/release/caltechlibrary/ts_dataset.svg?color=b44e88"
+alt="Latest release" /></a></p>
+<h2 id="table-of-contents">Table of contents</h2>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#run-demo">Run demo</a></li>
+<li><a href="#known-issues-and-limitations">Known issues and
+limitations</a></li>
+<li><a href="#getting-help">Getting help</a></li>
+<li><a href="#contributing">Contributing</a></li>
+<li><a href="#license">License</a></li>
+<li><a href="#acknowledgments">Acknowledgments</a></li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<p>The TypeScript <strong>ts_dataset</strong> module is for working with
+the JSON API provided by <a
+href="https://caltechlibrary.github.io/dataset/datasetd_api.5.html">datasetd</a>.
+There are two explorted classes defined – <code>DatasetApiClient</code>
+and <code>Dataset</code>. The first is a low level HTTP wrapper mapping
+basic dataset verbs to the JSON API. The later provides those verbs
+where the objects are TypeScript based. Most applications using dataset
+collections hosted via datasetd will use the latter class.</p>
+<p>Here’s a simple example of exercising some of the method available
+with the Dataset object. This demo code assumes datasetd running on
+localhost on port 8485 and a dataset set collection called
+“my_objects.ds” has been defined the in YAML configuration of
+datasetd.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { Dataset } <span class="im">from</span> <span class="st">&quot;caltechlibrary.github.io/ts_dataset/mods.ts&quot;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">/* for a local copy use: import { Dataset } from &quot;./mod.ts&quot; */</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> port <span class="op">=</span> <span class="dv">8485</span><span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> c_name <span class="op">=</span> <span class="st">&quot;my_objects.ds&quot;</span><span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> ds <span class="op">=</span> <span class="kw">new</span> <span class="fu">Dataset</span>(port<span class="op">,</span> c_name)<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">// Get a list of keys </span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> keys <span class="op">=</span> <span class="cf">await</span> ds<span class="op">.</span><span class="fu">keys</span>()<span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (keys <span class="op">===</span> <span class="kw">undefined</span>) {</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">Error</span>(<span class="st">&quot;Something went wrong, no keys!&quot;</span>)<span class="op">;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="vs">`there are </span><span class="sc">${</span>keys<span class="op">.</span><span class="at">length</span><span class="sc">}</span><span class="vs"> found in </span><span class="sc">${</span>c_name<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">// Create a new object</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> key <span class="op">=</span> <span class="st">&quot;object_three&quot;</span><span class="op">;</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> obj <span class="op">=</span> {</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;three&quot;</span><span class="op">:</span> <span class="dv">3</span><span class="op">,</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;four&quot;</span><span class="op">:</span> <span class="st">&quot;four&quot;</span><span class="op">,</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;five&quot;</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;updated&quot;</span><span class="op">:</span> (<span class="kw">new</span> <span class="bu">Date</span>)<span class="op">.</span><span class="fu">toISOString</span>()</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>ds<span class="op">.</span><span class="fu">create</span>(key<span class="op">,</span> obj)<span class="op">;</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>keys <span class="op">=</span> <span class="cf">await</span> ds<span class="op">.</span><span class="fu">keys</span>()</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="vs">`there are now </span><span class="sc">${</span>keys<span class="op">.</span><span class="at">length</span><span class="sc">}</span><span class="vs"> found in </span><span class="sc">${</span>c_name<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">// Read back an object</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> nObj <span class="op">=</span> <span class="cf">await</span> ds<span class="op">.</span><span class="fu">read</span>(key)<span class="op">;</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="vs">`this is the read object </span><span class="sc">${</span>nObj<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co">// Update our object.</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>obj<span class="op">.</span><span class="at">updated</span> <span class="op">=</span> (<span class="kw">new</span> <span class="bu">Date</span>)<span class="op">.</span><span class="fu">toLocaleString</span>()<span class="op">;</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>ds<span class="op">.</span><span class="fu">update</span>(key<span class="op">,</span> obj)<span class="op">;</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co">// Read back updated object</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>nObj <span class="op">=</span> <span class="cf">await</span> ds<span class="op">.</span><span class="fu">read</span>(key)<span class="op">;</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="vs">`this is the now our object </span><span class="sc">${</span>nObj<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co">// Remove our object</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>ds<span class="op">.</span><span class="fu">delete</span>(key)<span class="op">;</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>keys <span class="op">=</span> <span class="cf">await</span> ds<span class="op">.</span><span class="fu">keys</span>()</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="vs">`there are now </span><span class="sc">${</span>keys<span class="op">.</span><span class="at">length</span><span class="sc">}</span><span class="vs"> found in </span><span class="sc">${</span>c_name<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span></code></pre></div>
+<h2 id="installation">Installation</h2>
+<p>The latest release of <code>ts_dataset</code> is hosted on Caltech
+Library’s GitHub website at <a
+href="https://caltechlibrary.github.io/ts_dataset"
+class="uri">https://caltechlibrary.github.io/ts_dataset</a>. You can add
+it to your <code>deps.ts</code> file with a line like.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="op">*</span> <span class="im">from</span> <span class="st">&quot;https://caltechlibrary.github.io/ts_dataset/mods.ts&quot;</span><span class="op">;</span></span></code></pre></div>
+<p>You can also clone the Git repository and include it locally. The Git
+repository is hosted at <a
+href="https://github.com/caltechlibrary/ts_dataset"
+class="uri">https://github.com/caltechlibrary/ts_dataset</a>.</p>
+<p>You will need <code>datasetd</code> running for the module to be
+useful. Find out more about <code>datasetd</code> at <a
+href="https://caltechlibrary.github.io/dataset"
+class="uri">https://caltechlibrary.github.io/dataset</a>.</p>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li><a
+href="https://github.com/caltechlibrary/dataset/releases">dataset</a>)
+&gt;= 2.1.13, provides datasetd</li>
+<li><a href="https://deno.land">deno</a> &gt;= 1.44</li>
+<li><a href="https://github.com/tmux/tmux/wiki">tmux</a> (recommended
+for running the demo)</li>
+<li>To generation or release ts_dataaset you need the following
+<ul>
+<li><a href="https://pandoc.org">pandoc</a> &gt; 3.1</li>
+<li><a href="https://www.gnu.org/software/make/">GNU Make</a></li>
+<li><a href="https://pagefind.app">PageFind</a></li>
+</ul></li>
+</ul>
+<p>To generate the website content clone this repository then run
+“make”.</p>
+<h2 id="run-demo">Run demo</h2>
+<p>I use tmux to run the <a href="demo_ts_dataset.ts">demo</a>. It’s
+convient. I start with one window and get everything setup and startup
+datasetd using a Deno task. Then I split the window and run the demo.
+Below is what I type to run the demo (comments indicate where to switch
+windows, explain actions).</p>
+<pre class="shell"><code># Start up tmux
+tmux
+# clone this repository and change directory
+git clone https://github.com/caltechlibrary/ts_dataset
+cd ts_dataset
+# Use deno tasks to setup our test and demo dataset collections
+deno task setup_datasets
+# Start the datasetd
+deno task run_datasetd
+# Split the tmux window (e.g. Ctrl-b &quot;) and run the demo
+deno task demo</code></pre>
+<h2 id="known-issues-and-limitations">Known issues and limitations</h2>
+<ul>
+<li>this is a proof of concept only</li>
+<li>only has small subset of dataset features</li>
+<li>it is very experimental and subject to change</li>
+<li>it is not suitable for production</li>
+</ul>
+<h2 id="getting-help">Getting help</h2>
+<p>You can file a GitHub <a
+href="https://github.com/caltechlibrary/ts_dataset/issues">issue</a> or
+reach out to the authors listed in the <a
+href="codemeta.json">codemeta.json</a> file. See <a
+href="SUPPORT.html">SUPPORT</a> file in this repository.</p>
+<h2 id="contributing">Contributing</h2>
+<p>Contributions and help are welcome. See <a
+href="CONTRIBUTING.html"><code>CONTRIBUTING.md</code></a> file in this
+repository.</p>
+<h2 id="license">License</h2>
+<p>Software produced by the Caltech Library is Copyright © 2024
+California Institute of Technology. This software is freely distributed
+under a modified BSD 3-clause license. Please see the <a
+href="LICENSE">LICENSE</a> file for more information.</p>
+<h2 id="acknowledgments">Acknowledgments</h2>
+<p>This work was funded by the California Institute of Technology
+Library.</p>
+<div data-align="center">
+<p><br> <a href="https://www.caltech.edu">
+<img width="100" height="100" alt="Caltech logo" src="https://raw.githubusercontent.com/caltechlibrary/template/main/.graphics/caltech-round.png">
+</a></p>
+</div>
+</section>
+
+<footer>
+<span>&copy; 2024 <a href="https://www.library.caltech.edu/copyright">Caltech Library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+</footer>
+</body>
+</html>
