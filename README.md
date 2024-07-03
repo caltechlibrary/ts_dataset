@@ -73,28 +73,25 @@ console.log(`there are now ${keys.length} found in ${c_name}`);
 
 ## Installation
 
-The latest release of `ts_dataset` is hosted on Caltech Library's GitHub website at <https://caltechlibrary.github.io/ts_dataset>. You can
-add it to your `deps.ts` file with a line like.
+`ts_dataset` is a TypeScript module targetting Deno. Installation can be done via an import statement in your TypeScript module. You can also clone the GitHub repository at <https://caltechlibrary.github.io/ts_dataset>. The from value in your import statement should point to <https://caltechlibrary.github.io/ts_dataset/mod.ts> if you want to use it that way. Similarly you can add it to your project's `deps.ts` file with a line like.
 
 ~~~typescript
 export * from "https://caltechlibrary.github.io/ts_dataset/mods.ts";
 ~~~
 
-You can also clone the Git repository and include it locally. The Git repository is hosted at <https://github.com/caltechlibrary/ts_dataset>.
-
-You will need `datasetd` running for the module to be useful. Find out more about `datasetd` at <https://caltechlibrary.github.io/dataset>.
+`ts_dataset` is only useful in conjunction with a running [dataset](https://caltechlibrary.github.io/dataset) web service. This is provided by datasetd available as part of installing dataset. See the GitHub repo <https://github.com/caltechlibrary/dataset> for more details.
 
 ## Requirements
 
-- [dataset](https://github.com/caltechlibrary/dataset/releases)) >= 2.1.13, provides datasetd
+- [dataset](https://github.com/caltechlibrary/dataset/releases) >= 2.1.13, provides datasetd
 - [deno](https://deno.land) >= 1.44
 - [tmux](https://github.com/tmux/tmux/wiki) (recommended for running the demo)
-- To generation or release ts_dataaset you need the following
+- To generation or release ts_dataset you need the following
   - [pandoc](https://pandoc.org) > 3.1
   - [GNU Make](https://www.gnu.org/software/make/)
   - [PageFind](https://pagefind.app)
 
-To generate the website content clone this repository then run "make".
+To (re)generate the website content clone this repository, change into it and run "make".
 
 ## Run demo
 
