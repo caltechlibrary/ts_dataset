@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ts_dataset</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://caltechlibrary.github.io/css/site.css">
+</head>
+<body>
+<header>
+<a href="http://library.caltech.edu" title="link to Caltech Library Homepage"><img src="https://caltechlibrary.github.io/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="index.html">README</a></li>
+	<li><a href="demo.html">Demo</a></li>
+    <li><a href="LICENSE">LICENSE</a></li>
+    <li><a href="install.html">INSTALL</a></li>
+	<li><a href="SUPPORT.html">SUPPORT</a></li>
+	<li><a href="CONTRIBUTING.html">CONTRIBUTING</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="https://github.com/caltechlibrary/ts_dataset">GitHub</a></li>
+</ul>
+</nav>
+
+<section>
+<h1 id="a-typescript-module-for-dataset">A TypeScript module for
+dataset</h1>
+<p>This is a proof of concept demonstration of managing a <a
+href="https://caltechlibrary.github.io/dataset">dataset</a> from <a
+href="https://typescriptlang.org">TypeScript</a> running in <a
+href="https://deno.land">Deno</a>.</p>
+<p>The <code>ts_dataset</code> includes a simple demo, <a
+href="demo_ts_dataset.ts">demo_ts_dataset.ts</a>. It includes a minimal
+set of dataset operations (verbs) from TypeScript. <code>datasetd</code>
+is used to provide access to the dataset collections via a JSON API. The
+collection must be available via the JSON API for this TypeScript module
+to be useful. Take a look at the code for the <a
+href="https://caltechlibrary.github.io/ts_dataset/demo_ts_dataset.ts">demo</a>.
+It gives a nice simple example of using the API.</p>
+<h2 id="watch-the-demo">Watch the demo</h2>
+<p>Here’s a quick demo of Deno, datasetd and tmux. The demo assumes you
+already have Deno, dataset and tmux installed. Here’s the stops
+covered.</p>
+<ol type="1">
+<li>clone ts_dataset</li>
+<li>setup the dataset collections for the demo</li>
+<li>run datasetd via a deno task</li>
+<li>run the demo via a deno task</li>
+</ol>
+<figure>
+<img src="demo_ts_dataset.gif"
+alt="An asciinema cast of the running demo" />
+<figcaption aria-hidden="true">An asciinema cast of the running
+demo</figcaption>
+</figure>
+</section>
+
+<footer>
+<span>&copy; 2024 <a href="https://www.library.caltech.edu/copyright">Caltech Library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+</footer>
+</body>
+</html>

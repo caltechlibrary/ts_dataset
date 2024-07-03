@@ -13,6 +13,7 @@
 <ul>
     <li><a href="/">Home</a></li>
     <li><a href="index.html">README</a></li>
+	<li><a href="demo.html">Demo</a></li>
     <li><a href="LICENSE">LICENSE</a></li>
     <li><a href="install.html">INSTALL</a></li>
 	<li><a href="SUPPORT.html">SUPPORT</a></li>
@@ -28,7 +29,7 @@ id="ts_dataset-a-typescript-module-for-working-with-datasetd">ts_dataset
 a TypeScript module for working with datasetd</h1>
 <p>The <a href="https://github.com/caltechlibrary/dataset">dataset
 project</a> provides a JSON API for JSON object storage via the datasetd
-application. This repository hosts a TypeScript module targetting <a
+application. This repository hosts a TypeScript module targeting <a
 href="https://deno.land">Deno</a> for integrating datasetd JSON API
 managed dataset collections.</p>
 <p><a
@@ -55,7 +56,7 @@ limitations</a></li>
 <p>The TypeScript <strong>ts_dataset</strong> module is for working with
 the JSON API provided by <a
 href="https://caltechlibrary.github.io/dataset/datasetd_api.5.html">datasetd</a>.
-There are two explorted classes defined – <code>DatasetApiClient</code>
+There are two exported classes defined – <code>DatasetApiClient</code>
 and <code>Dataset</code>. The first is a low level HTTP wrapper mapping
 basic dataset verbs to the JSON API. The later provides those verbs
 where the objects are TypeScript based. Most applications using dataset
@@ -107,7 +108,7 @@ class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb1-
 <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>keys <span class="op">=</span> <span class="cf">await</span> ds<span class="op">.</span><span class="fu">keys</span>()</span>
 <span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="vs">`there are now </span><span class="sc">${</span>keys<span class="op">.</span><span class="at">length</span><span class="sc">}</span><span class="vs"> object(s) found in </span><span class="sc">${</span>c_name<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span></code></pre></div>
 <h2 id="installation">Installation</h2>
-<p><code>ts_dataset</code> is a TypeScript module targetting Deno.
+<p><code>ts_dataset</code> is a TypeScript module targeting Deno.
 Installation can be done via an import statement in your TypeScript
 module. You can also clone the GitHub repository at <a
 href="https://caltechlibrary.github.io/ts_dataset"
@@ -136,7 +137,7 @@ href="https://github.com/caltechlibrary/dataset/releases">dataset</a>
 for running the demo)</li>
 <li>To generation or release ts_dataset you need the following
 <ul>
-<li><a href="https://pandoc.org">pandoc</a> &gt; 3.1</li>
+<li><a href="https://pandoc.org">Pandoc</a> &gt; 3.1</li>
 <li><a href="https://www.gnu.org/software/make/">GNU Make</a></li>
 <li><a href="https://pagefind.app">PageFind</a></li>
 </ul></li>
@@ -145,7 +146,7 @@ for running the demo)</li>
 into it and run “make”.</p>
 <h2 id="run-demo">Run demo</h2>
 <p>I use tmux to run the <a href="demo_ts_dataset.ts">demo</a>. It’s
-convient. I start with one window and get everything setup and startup
+convenient. I start with one window and get everything setup and startup
 datasetd using a Deno task. Then I split the window and run the demo.
 Below is what I type to run the demo (comments indicate where to switch
 windows, explain actions).</p>
