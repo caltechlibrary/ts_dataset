@@ -10,7 +10,7 @@ MD_PAGES = $(shell ls -1 *.md | grep -v 'nav.md')
 
 HTML_PAGES = $(shell ls -1 *.md | grep -v 'nav.md' | sed -E 's/.md/.html/g')
 
-build: about.md CITATION.cff $(HTML_PAGES) $(MD_PAGES) docs pagefind
+build: version.ts about.md CITATION.cff $(HTML_PAGES) $(MD_PAGES) docs pagefind
 
 $(HTML_PAGES): $(MD_PAGES) .FORCE
 	if [ -f $(PANDOC) ]; then $(PANDOC) --metadata title=$(basename $@) -s --to html5 $(basename $@).md -o $(basename $@).html \
