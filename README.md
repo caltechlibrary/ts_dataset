@@ -25,8 +25,7 @@ The TypeScript **ts_dataset** module is for working with the JSON API provided b
 Here's a simple example of exercising some of the method available with the Dataset object. This demo code assumes datasetd running on localhost on port 8485 and a dataset set collection called "my_objects.ds" has been defined the in YAML configuration of datasetd.
 
 ~~~typescript
-import { Dataset } from "caltechlibrary.github.io/ts_dataset/mods.ts"
-/* for a local copy use: import { Dataset } from "./mod.ts" */
+import { Dataset } from "https://caltechlibrary.github.io/ts_dataset/mods.ts"; 
 
 const port = 8485;
 const c_name = "my_objects.ds";
@@ -35,40 +34,37 @@ const ds = new Dataset(port, c_name);
 
 // Get a list of keys 
 let keys = await ds.keys();
-if (keys === undefined) {
-    throw new Error("Something went wrong, no keys!");
-}
-console.log(`there are ${keys.length} found in ${c_name}`);
+console.log(`there are ${keys.length} object(s) found in ${c_name}`);
 // Create a new object
-let key = "object_three";
+let key = "object_key_three";
 let obj = {
-    "three": 3,
-    "four": "four",
-    "five": true,
+    "one": 1,
+    "two": "number 2",
+    "three": true,
     "updated": (new Date).toISOString()
 };
 
-ds.create(key, obj);
+await ds.create(key, obj);
 keys = await ds.keys()
-console.log(`there are now ${keys.length} found in ${c_name}`);
+console.log(`there are now ${keys.length} object(s) found in ${c_name}`);
 
 // Read back an object
 let nObj = await ds.read(key);
-console.log(`this is the read object ${nObj}`);
+console.log(`this is the read object ${JSON.stringify(nObj, null, "  ")}`);
 
 // Update our object.
 obj.updated = (new Date).toLocaleString();
-ds.update(key, obj);
+await ds.update(key, obj);
 
 // Read back updated object
 nObj = await ds.read(key);
-console.log(`this is the now our object ${nObj}`);
+console.log(`this is the now our object ${JSON.stringify(nObj, null, "  ")}`);
 
 // Remove our object
-ds.delete(key);
+await ds.delete(key);
 
 keys = await ds.keys()
-console.log(`there are now ${keys.length} found in ${c_name}`);
+console.log(`there are now ${keys.length} object(s) found in ${c_name}`);
 ~~~
 
 ## Installation
