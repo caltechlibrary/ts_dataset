@@ -2,7 +2,7 @@
   "tasks": {
     "setup_datasets": "dataset init my_objects.ds 'sqlite://collection.db' ; dataset init test_dataset.ds 'sqlite://collection.db'",
     "run_datasetd": "datasetd test_ts_dataset.yaml",
-    "test": "dsquery test_dataset.ds 'delete from test_dataset' ; deno test --allow-net dataset_test.ts",
+    "test": "dsquery test_dataset.ds 'delete from test_dataset' >/dev/null ; deno test --allow-net dataset_test.ts",
     "demo": "dsquery my_objects.ds \"delete from my_objects where _key = 'object_key_three'\" >/dev/null ; deno run --allow-net demo_ts_dataset.ts",
 	"website": "make -f website.mak"
   },

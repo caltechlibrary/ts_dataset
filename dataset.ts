@@ -171,6 +171,10 @@ export class Dataset {
       if (key_list !== null) {
         return key_list;
       }
+      return [];
+    }
+    if (resp.body !== null) {
+      resp.body.cancel();
     }
     return [];
   }
@@ -208,6 +212,9 @@ export class Dataset {
     if (resp.ok && resp.body) {
       return await resp.json();
     }
+    if (resp.body !== null) {
+      resp.body.cancel();
+    }
     return undefined;
   }
 
@@ -227,6 +234,9 @@ export class Dataset {
       }
       return true;
     }
+    if (resp.body !== null) {
+      resp.body.cancel();
+    }
     return false;
   }
 
@@ -243,6 +253,9 @@ export class Dataset {
         resp.body.cancel();
       }
       return true;
+    }
+    if (resp.body !== null) {
+      resp.body.cancel();
     }
     return false;
   }
@@ -274,16 +287,17 @@ export class Dataset {
       const resp = await this._ds.query(query_name, fields, body);
       if (resp.ok) {
         let results = await resp.json();
-        console.log("DEBUG query results", results);
         return results;
       }
     } else {
       const resp = await this._ds.query(query_name, [], "");
       if (resp.ok) {
         let results = await resp.json();
-        console.log("DEBUG query results (no fields or kv)", results);
         return results;
       }
+	  if (resp.body !== null) {
+		  resp.body.cancel();
+	  }
     }
     return undefined;
   }

@@ -46,6 +46,9 @@ docs: .FORCE
 	mkdir -p docs
 	deno doc --html --name="ts_dataset" --output=./docs dataset.ts
 
+test: .FORCE
+	deno task test
+
 clean: .FORCE
 	rm -fR docs/*
 	rm -fR bin/$(PROGRAM)$(EXT)

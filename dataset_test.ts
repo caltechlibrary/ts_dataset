@@ -86,7 +86,6 @@ Deno.test("test_Dataset", async () => {
       );
     }
     let results = await ds.query("list_item", [], {});
-	console.log("DEBUG results ->", results);
 
     let keys = await ds.keys();
     assertStrictEquals(
