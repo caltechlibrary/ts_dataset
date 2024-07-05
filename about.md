@@ -10,7 +10,7 @@ authors:
     orcid: "https://orcid.org/0000-0003-0900-6903"
 
 repository-code: "https://github.com/caltechlibrary/ts_dataset"
-version: 0.0.1
+version: 0.0.2
 license-url: "https://github.com/caltechlibrary/ts_dataset/blob/main/LICENSE"
 keywords: [ "software", "library", "typescript", "dataset" ]
 date-released: 2024-07-03
@@ -19,7 +19,7 @@ date-released: 2024-07-03
 About this software
 ===================
 
-## ts_dataset 0.0.1
+## ts_dataset 0.0.2
 
 ### Authors
 
