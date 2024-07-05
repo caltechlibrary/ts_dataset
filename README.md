@@ -25,7 +25,7 @@ The TypeScript **ts_dataset** module is for working with the JSON API provided b
 Here's a simple example of exercising some of the method available with the Dataset object. This demo code assumes datasetd running on localhost on port 8485 and a dataset set collection called "my_objects.ds" has been defined the in YAML configuration of datasetd.
 
 ~~~typescript
-import { Dataset } from "https://caltechlibrary.github.io/ts_dataset/mods.ts"; 
+import { Dataset } from "https://caltechlibrary.github.io/ts_dataset/mod.ts"; 
 
 const port = 8485;
 const c_name = "my_objects.ds";
@@ -72,7 +72,7 @@ console.log(`there are now ${keys.length} object(s) found in ${c_name}`);
 `ts_dataset` is a TypeScript module targeting Deno. Installation can be done via an import statement in your TypeScript module. You can also clone the GitHub repository at <https://caltechlibrary.github.io/ts_dataset>. The from value in your import statement should point to <https://caltechlibrary.github.io/ts_dataset/mod.ts> if you want to use it that way. Similarly you can add it to your project's `deps.ts` file with a line like.
 
 ~~~typescript
-export * from "https://caltechlibrary.github.io/ts_dataset/mods.ts";
+export * from "https://caltechlibrary.github.io/ts_dataset/mod.ts";
 ~~~
 
 `ts_dataset` is only useful in conjunction with a running [dataset](https://caltechlibrary.github.io/dataset) web service. This is provided by datasetd available as part of installing dataset. See the GitHub repo <https://github.com/caltechlibrary/dataset> for more details.
