@@ -4,7 +4,7 @@
   "name": "ts_dataset",
   "identifier": "ts_dataset",
   "description": "A TypeScript module for interacting with datasetd",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "datePublished": "2024-07-17",
   "dateCreated": "2024-07-03",
   "dateModified": "2024-07-17",
