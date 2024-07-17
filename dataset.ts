@@ -100,7 +100,7 @@ export class DatasetApiClient {
    * ```
    */
   async create(key: string, body: string): Promise<Response> {
-    return fetch(`${this.dataset_api}/object/${key}`, {
+    return fetch(`${this.dataset_api}/object/${encodeURI(key)}`, {
       headers: { "content-type": "application/json" },
       method: "POST",
       body: body,
@@ -122,7 +122,7 @@ export class DatasetApiClient {
    * ```
    */
   async read(key: string): Promise<Response> {
-    return fetch(`${this.dataset_api}/object/${key}`, {
+    return fetch(`${this.dataset_api}/object/${encodeURI(key)}`, {
       headers: { "content-type": "application/json" },
       method: "GET",
     });
@@ -150,7 +150,7 @@ export class DatasetApiClient {
    * ```
    */
   async update(key: string, body: string): Promise<Response> {
-    return fetch(`${this.dataset_api}/object/${key}`, {
+    return fetch(`${this.dataset_api}/object/${encodeURI(key)}`, {
       headers: { "content-type": "application/json" },
       method: "PUT",
       body: body,
@@ -173,7 +173,7 @@ export class DatasetApiClient {
    * ```
    */
   async delete(key: string): Promise<Response> {
-    return fetch(`${this.dataset_api}/object/${key}`, {
+    return fetch(`${this.dataset_api}/object/${encodeURI(key)}`, {
       headers: { "content-type": "application/json" },
       method: "DELETE",
     });
