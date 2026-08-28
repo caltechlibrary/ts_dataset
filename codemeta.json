@@ -55,7 +55,7 @@
   "releaseNotes": "https://github.com/caltechlibrary/ts_dataset/blob/main/CHANGES.md",
   "issueTracker": "https://github.com/caltechlibrary/ts_dataset/issues",
   "downloadUrl": "https://github.com/caltechlibrary/ts_dataset/archive/main.zip",
-  "softwareHelp": "https://caltechlibrary.github.io/ts_typescript",
+  "softwareHelp": "https://software.library.caltech.edu/ts_typescript",
   "programmingLanguage": [
     {
       "@type": "ComputerLanguage",

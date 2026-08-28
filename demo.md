@@ -15,9 +15,9 @@ required_software:
 
 # A TypeScript module for dataset
 
-This is a proof of concept demonstration of managing a [dataset](https://caltechlibrary.github.io/dataset) from [TypeScript](https://typescriptlang.org) running in [Deno](https://deno.land).
+This is a proof of concept demonstration of managing a [dataset](https://software.library.caltech.edu/dataset) from [TypeScript](https://typescriptlang.org) running in [Deno](https://deno.land).
 
-The `ts_dataset` includes a simple demo, [demo_ts_dataset.ts](demo_ts_dataset.ts). It includes a minimal set of dataset operations (verbs) from TypeScript. `datasetd` is used to provide access to the dataset collections via a JSON API. The collection must be available via the JSON API for this TypeScript module to be useful. Take a look at the code for the [demo](https://caltechlibrary.github.io/ts_dataset/demo_ts_dataset.ts). It gives a nice simple example of using the API.
+The `ts_dataset` includes a simple demo, [demo_ts_dataset.ts](demo_ts_dataset.ts). It includes a minimal set of dataset operations (verbs) from TypeScript. `datasetd` is used to provide access to the dataset collections via a JSON API. The collection must be available via the JSON API for this TypeScript module to be useful. Take a look at the code for the [demo](https://software.library.caltech.edu/ts_dataset/demo_ts_dataset.ts). It gives a nice simple example of using the API.
 
 ## Watch the demo
 
