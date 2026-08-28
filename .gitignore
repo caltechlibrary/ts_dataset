@@ -28,3 +28,4 @@ build/
 *.ds
 _codemeta.json
 gh_workflows_available
+man
