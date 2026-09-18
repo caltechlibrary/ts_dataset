@@ -1,6 +1,14 @@
 {
   "fmt": {
-    "indentWidth": 2
+    "indentWidth": 2,
+    "include": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.mjs",
+      "**/*.cjs"
+    ]
   },
   "tasks": {
     "setup_datasets": "dataset init my_objects.ds 'sqlite://collection.db' ; dataset init test_dataset.ds 'sqlite://collection.db'",
