@@ -36,10 +36,6 @@
 import { DatasetError, datasetErrorFromResponse } from "./datasetd_status.ts";
 
 /**
- * DatasetApiClient class implements a thin wrapper around a dataset collection mapping most of the
- * command line verbs to methods.
- */
-/**
  * DatasetOptions are the optional settings of Dataset and DatasetApiClient.
  *
  * @example
@@ -60,10 +56,15 @@ export interface DatasetOptions {
   strictStatus?: boolean;
 }
 
+/**
+ * DatasetApiClient class implements a thin wrapper around a dataset collection mapping most of the
+ * command line verbs to methods.
+ */
 export class DatasetApiClient {
   port = 8485;
   c_name = "";
   dataset_api = "";
+  /** strictStatus is the option the client was made with; it never changes what a method returns. */
   strictStatus = false;
 
   /**

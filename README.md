@@ -83,6 +83,7 @@ export * from "https://software.library.caltech.edu/ts_dataset/mod.ts";
 
 - [dataset](https://github.com/caltechlibrary/dataset/releases) 2.5.x (>= 2.5.2), provides datasetd. ts_dataset 2.5.x needs dataset 2.5.x, see [Versions](#versions)
 - [deno](https://deno.land) >= 1.44
+- To run the tests (`deno task test`) you need `dataset` and `datasetd` 2.5.2 or later on your `PATH` (or named in the `DATASET` and `DATASETD` environment variables); the tests start their own datasetd on a free port
 - [tmux](https://github.com/tmux/tmux/wiki) (recommended for running the demo)
 - To generation or release ts_dataset you need the following
   - [Pandoc](https://pandoc.org) > 3.1
