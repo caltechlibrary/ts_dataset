@@ -4,10 +4,10 @@
   "name": "ts_dataset",
   "identifier": "ts_dataset",
   "description": "A TypeScript module for interacting with datasetd",
-  "version": "0.0.4",
-  "datePublished": "2024-07-17",
+  "version": "2.5.2",
+  "datePublished": "2026-11-13",
   "dateCreated": "2024-07-03",
-  "dateModified": "2024-07-17",
+  "dateModified": "2026-11-13",
   "author": [
     {
       "@type": "Person",
@@ -64,7 +64,7 @@
     }
   ],
   "softwareRequirements": [
-    "dataset >= 2.1.3",
+    "dataset >= 2.5.2",
     "Deno >= 1.44",
     "Pandoc >= 3.1",
     "GNU Make",

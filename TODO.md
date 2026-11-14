@@ -11,7 +11,9 @@ D
 Bugs
 ----
 
-- [ ] Every method in the high-level `Dataset` class collapses a failed
+- [X] Done for 2.5.2 as the opt-in `strictStatus` option (default off, so COLD and the other callers see no
+      change); making it the default, and the audit of COLD's call sites it needs first, are not done. See
+      `agents/projects/ts_dataset/decisions/0001-*.md`. Every method in the high-level `Dataset` class collapses a failed
       request into a falsy or empty value, so a caller cannot distinguish
       "the collection said no" from "the request never succeeded". Found
       2026-09-18 while building a COLD report against `rdm_requests.ds`;

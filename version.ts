@@ -6,10 +6,10 @@ export const appInfo: {[k: string]: string} = {
   appName: "ts_dataset",
 
   // Version number of release
-  version: "",
+  version: "2.5.2",
 
   // ReleaseDate, the date version.ts was generated
-  releaseDate: "",
+  releaseDate: "2026-11-13",
 
   // ReleaseHash, the Git hash when version.go was generated
   releaseHash: "",

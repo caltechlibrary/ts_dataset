@@ -33,19 +33,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { DatasetError, datasetErrorFromResponse } from "./datasetd_status.ts";
+
 /**
  * DatasetApiClient class implements a thin wrapper around a dataset collection mapping most of the
  * command line verbs to methods.
  */
+/**
+ * DatasetOptions are the optional settings of Dataset and DatasetApiClient.
+ *
+ * @example
+ *
+ * ```
+ *    const ds = new Dataset(8485, "test.ds", { strictStatus: true });
+ * ```
+ */
+export interface DatasetOptions {
+  /**
+   * strictStatus, false unless set, selects the behaviour that goes with a
+   * datasetd running with `strict_status: true` in its YAML. Off, Dataset
+   * behaves exactly as ts_dataset 0.0.4 did: a failure is `false`, `[]` or
+   * `undefined`. On, a failure throws a DatasetError, and `read()` is
+   * `undefined` only when datasetd says 404. The client's setting and the
+   * server's are separate; see Dataset.checkStrict().
+   */
+  strictStatus?: boolean;
+}
+
 export class DatasetApiClient {
   port = 8485;
   c_name = "";
   dataset_api = "";
+  strictStatus = false;
 
   /**
    * constructor for object
    * @param {number} port is the port number to use when request data from datasetd service
    * @param {sting} c_name is the collection name used to form API requests.
+   * @param {DatasetOptions} options, optional; strictStatus is recorded here and
+   * read by Dataset. DatasetApiClient always answers with the raw Response.
    *
    * @example
    *
@@ -53,10 +79,48 @@ export class DatasetApiClient {
    *    const ds = new DatasetApiClient(8485, "test.ds");
    * ```
    */
-  constructor(port: number, c_name: string) {
+  constructor(port: number, c_name: string, options: DatasetOptions = {}) {
     this.port = port;
     this.c_name = c_name;
     this.dataset_api = `http://localhost:${port}/api/${c_name}`;
+    this.strictStatus = options.strictStatus === true;
+  }
+
+  /**
+   * checkStrict finds out whether datasetd is running with `strict_status: true`
+   * by reading a key that cannot exist. A legacy datasetd answers 200 with `{}`,
+   * a strict one 404 with a JSON error object. It only reports; it never throws
+   * because of a mismatch with this client's strictStatus (Dataset.checkStrict
+   * does that). It throws a DatasetError when the answer is neither, for example
+   * 403 from a legacy datasetd for a collection it does not serve.
+   *
+   * @returns {Promise<boolean>} true when datasetd is strict, false when it is not
+   *
+   * @example
+   *
+   * ```
+   *    const ds = new DatasetApiClient(8485, "test.ds");
+   *    const strict = await ds.checkStrict();
+   * ```
+   */
+  async checkStrict(): Promise<boolean> {
+    const key = `ts_dataset-strict-probe-${crypto.randomUUID()}`;
+    const resp = await this.read(key);
+    if (resp.status === 200) {
+      await resp.body?.cancel();
+      return false;
+    }
+    const err = await datasetErrorFromResponse(resp);
+    if (resp.status === 404) {
+      try {
+        if (JSON.parse(err.body)?.error?.outcome === "not_found") {
+          return true;
+        }
+      } catch (_err) {
+        // not a strict error object
+      }
+    }
+    throw err;
   }
 
   /**
@@ -244,12 +308,87 @@ export class Dataset {
    *    const ds = new Dataset(8485, "test.ds");
    * ```
    */
-  constructor(port: number, c_name: string) {
-    this._ds = new DatasetApiClient(port, c_name);
+  /** strictStatus is true when failures throw a DatasetError. */
+  strictStatus = false;
+
+  /**
+   * constructor for object
+   *
+   * @param {number} port is the port number to use when request data from datasetd service
+   * @param {sting} c_name is the collection name used to form API requests.
+   * @param {DatasetOptions} options, optional. `{ strictStatus: true }` selects
+   * the behaviour that goes with a datasetd running with `strict_status: true`.
+   *
+   * @example
+   *
+   * ```
+   *    const ds = new Dataset(8485, "test.ds", { strictStatus: true });
+   * ```
+   */
+  constructor(port: number, c_name: string, options: DatasetOptions = {}) {
+    this._ds = new DatasetApiClient(port, c_name, options);
+    this.strictStatus = options.strictStatus === true;
   }
 
   /**
-   * keys returns a list of all keys from a dataset collection
+   * checkStrict asks datasetd whether it is running with `strict_status: true`
+   * and returns the answer. When this client is strict and datasetd is not, it
+   * throws a DatasetError (outcome "unexpected"), because that combination
+   * misleads: a missing key still answers 200 `{}` and so reads as an object.
+   * It is never called by the constructor, so constructing a client never
+   * touches the network.
+   *
+   * @returns {Promise<boolean>} true when datasetd is strict, false when it is not
+   * @throws {DatasetError} when strictStatus is on and datasetd is not strict, or
+   * when the answer cannot be read as either
+   *
+   * @example
+   *
+   * ```
+   *    const ds = new Dataset(8485, "test.ds", { strictStatus: true });
+   *    await ds.checkStrict(); // throws if datasetd was started without strict_status
+   * ```
+   */
+  async checkStrict(): Promise<boolean> {
+    const server = await this._send(() => this._ds.checkStrict());
+    if (this.strictStatus && !server) {
+      throw new DatasetError({
+        kind: "unexpected",
+        status: 200,
+        reason:
+          "this client is strict but datasetd is not running with strict_status: true, " +
+          "so a missing key reads as an empty object; set strict_status: true in the datasetd YAML",
+      });
+    }
+    return server;
+  }
+
+  /**
+   * _send runs a request. In strict mode a failure to get any answer (a refused
+   * connection, say) is thrown as a DatasetError with the outcome "unavailable";
+   * otherwise the error is passed on as it always was.
+   */
+  async _send<T>(fn: () => Promise<T>): Promise<T> {
+    try {
+      return await fn();
+    } catch (err) {
+      if (this.strictStatus && !(err instanceof DatasetError)) {
+        throw new DatasetError({
+          kind: "unavailable",
+          reason: err instanceof Error ? err.message : String(err),
+        });
+      }
+      throw err;
+    }
+  }
+
+  /**
+   * keys returns a list of all keys from a dataset collection. An empty list
+   * means the collection is empty. With strictStatus on, a failed request throws
+   * a DatasetError instead of returning an empty list.
+   *
+   * @returns {Promise<string[]>} the keys
+   * @throws {DatasetError} in strict mode, when the request fails
    *
    * @example
    *
@@ -259,13 +398,16 @@ export class Dataset {
    * ```
    */
   async keys(): Promise<string[]> {
-    const resp = await this._ds.keys();
+    const resp = await this._send(() => this._ds.keys());
     if (resp.ok && resp.body) {
       const key_list = await resp.json();
       if (key_list !== null) {
         return key_list;
       }
       return [];
+    }
+    if (this.strictStatus) {
+      throw await datasetErrorFromResponse(resp);
     }
     if (resp.body !== null) {
       resp.body.cancel();
@@ -279,15 +421,27 @@ export class Dataset {
    * @param {string} key
    * @param {object} obj is the thing you want to create in the collection.
    * @returns {boolean} true if successful, false otherwise
+   * @throws {DatasetError} with strictStatus on, when it fails: outcome "conflict"
+   * when the key exists (datasetd running with strict_status writes nothing)
+   *
+   * @example
+   *
+   * ```
+   *    const ds = new Dataset(8485, "test.ds");
+   *    const ok = await ds.create("3musketeers", { one: 1 });
+   * ```
    */
   async create(key: string, obj: object): Promise<boolean> {
     const text = JSON.stringify(obj);
-    const resp = await this._ds.create(key, text);
+    const resp = await this._send(() => this._ds.create(key, text));
     if (resp.ok) {
       if (resp.body !== null) {
         resp.body.cancel();
       }
       return true;
+    }
+    if (this.strictStatus) {
+      throw await datasetErrorFromResponse(resp);
     }
     if (resp.body !== null) {
       resp.body.cancel();
@@ -299,7 +453,10 @@ export class Dataset {
    * read retrieves an object from a dataset collection using the datasetd JSON API.
    *
    * @param {string} key, the key to the object you want to retrieve.
-   * @returns {object} returns the object or undefined if it fails.
+   * @returns {object} returns the object or undefined if it fails. With
+   * strictStatus on it is undefined only when datasetd answers 404 (no such
+   * record); any other failure throws.
+   * @throws {DatasetError} in strict mode, for a failure other than 404
    *
    * @example
    *
@@ -310,9 +467,12 @@ export class Dataset {
    * ```
    */
   async read(key: string): Promise<object | undefined> {
-    const resp = await this._ds.read(key);
+    const resp = await this._send(() => this._ds.read(key));
     if (resp.ok && resp.body) {
       return await resp.json();
+    }
+    if (this.strictStatus && resp.status !== 404) {
+      throw await datasetErrorFromResponse(resp);
     }
     if (resp.body !== null) {
       resp.body.cancel();
@@ -326,6 +486,8 @@ export class Dataset {
    * @param {string} key
    * @param {object} obj is the replacement object for the key in the collection.
    * @returns {boolean} true if successful, false otherwise
+   * @throws {DatasetError} with strictStatus on, when it fails: outcome "not_found"
+   * when the key does not exist
    *
    * @example
    *
@@ -342,12 +504,15 @@ export class Dataset {
    */
   async update(key: string, obj: object): Promise<boolean> {
     const text = JSON.stringify(obj);
-    const resp = await this._ds.update(key, text);
+    const resp = await this._send(() => this._ds.update(key, text));
     if (resp.ok) {
       if (resp.body !== null) {
         resp.body.cancel();
       }
       return true;
+    }
+    if (this.strictStatus) {
+      throw await datasetErrorFromResponse(resp);
     }
     if (resp.body !== null) {
       resp.body.cancel();
@@ -360,6 +525,8 @@ export class Dataset {
    *
    * @param {string} key, the key to the object you want to remove.
    * @returns {boolean} true if successful, false otherwise
+   * @throws {DatasetError} with strictStatus on, when it fails: outcome "not_found"
+   * when the key does not exist
    *
    * @example
    *
@@ -370,12 +537,15 @@ export class Dataset {
    * ```
    */
   async delete(key: string): Promise<boolean> {
-    const resp = await this._ds.delete(key);
+    const resp = await this._send(() => this._ds.delete(key));
     if (resp.ok) {
       if (resp.body !== null) {
         resp.body.cancel();
       }
       return true;
+    }
+    if (this.strictStatus) {
+      throw await datasetErrorFromResponse(resp);
     }
     if (resp.body !== null) {
       resp.body.cancel();
@@ -396,9 +566,12 @@ export class Dataset {
    * to the query defined in the YAML file. The fields need to match those in kv.
    * @param {object} kv is the map of key and values to POST to the JSON API if
    * the query requires parameters.
-   * @returns {object}, usually a list or an empty list or object is returned if
-   * there were no results or an error. Errors will be reported in the datasetd
-   * log.
+   * @returns {object}, usually a list. An empty list means the query found
+   * nothing (datasetd answered 200 with `[]`). Without strictStatus a failed
+   * query is `undefined` and the cause is only in the datasetd log; with it a
+   * failure throws a DatasetError (outcome "not_found" for a query name that is
+   * not defined, "invalid" for a bad parameter).
+   * @throws {DatasetError} in strict mode, when the query fails
    *
    * @example
    *
@@ -415,22 +588,22 @@ export class Dataset {
     fields: string[],
     kv: object,
   ): Promise<object | undefined> {
+    let resp: Response;
     if (fields.length > 0) {
       const body = JSON.stringify(kv);
-      const resp = await this._ds.query(query_name, fields, body);
-      if (resp.ok) {
-        let results = await resp.json();
-        return results;
-      }
+      resp = await this._send(() => this._ds.query(query_name, fields, body));
     } else {
-      const resp = await this._ds.query(query_name, [], "");
-      if (resp.ok) {
-        let results = await resp.json();
-        return results;
-      }
-      if (resp.body !== null) {
-        resp.body.cancel();
-      }
+      resp = await this._send(() => this._ds.query(query_name, [], ""));
+    }
+    if (resp.ok) {
+      let results = await resp.json();
+      return results;
+    }
+    if (this.strictStatus) {
+      throw await datasetErrorFromResponse(resp);
+    }
+    if (resp.body !== null) {
+      resp.body.cancel();
     }
     return undefined;
   }

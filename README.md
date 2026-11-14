@@ -10,6 +10,8 @@ The [dataset project](https://github.com/caltechlibrary/dataset) provides a JSON
 * [Introduction](#introduction)
 * [Installation](#installation)
 * [Requirements](#requirements)
+* [HTTP status and the strictStatus option](#http-status-and-the-strictstatus-option)
+* [Versions](#versions)
 * [Run demo](#run-demo)
 * [Known issues and limitations](#known-issues-and-limitations)
 * [Getting help](#getting-help)
@@ -79,7 +81,7 @@ export * from "https://software.library.caltech.edu/ts_dataset/mod.ts";
 
 ## Requirements
 
-- [dataset](https://github.com/caltechlibrary/dataset/releases) >= 2.1.13, provides datasetd
+- [dataset](https://github.com/caltechlibrary/dataset/releases) 2.5.x (>= 2.5.2), provides datasetd. ts_dataset 2.5.x needs dataset 2.5.x, see [Versions](#versions)
 - [deno](https://deno.land) >= 1.44
 - [tmux](https://github.com/tmux/tmux/wiki) (recommended for running the demo)
 - To generation or release ts_dataset you need the following
@@ -88,6 +90,54 @@ export * from "https://software.library.caltech.edu/ts_dataset/mod.ts";
   - [PageFind](https://pagefind.app)
 
 To (re)generate the website content clone this repository, change into it and run "make".
+
+## HTTP status and the strictStatus option
+
+By default `Dataset` behaves as ts_dataset 0.0.4 did: a request that fails is reported as `false`, `[]` or `undefined`, so a failure can look like "nothing there". Pass `{ strictStatus: true }` and every failure throws a `DatasetError` that says what happened.
+
+~~~typescript
+import { Dataset, DatasetError } from "https://software.library.caltech.edu/ts_dataset/mod.ts";
+
+const ds = new Dataset(8485, "my_objects.ds", { strictStatus: true });
+try {
+    await ds.create("object_key_three", { one: 1 });
+} catch (err) {
+    if (err instanceof DatasetError && err.outcome === "conflict") {
+        // the key exists; datasetd wrote nothing
+    } else {
+        throw err;
+    }
+}
+~~~
+
+A `DatasetError` has an `outcome` (`not_found`, `conflict`, `invalid`, `too_large`, `unauthenticated`, `forbidden`, `unavailable`, `internal` or `unexpected`), the HTTP `status` (absent when there was no answer at all), the `reason` datasetd gave, any `retryAfter`, and the response `body`. Match on the outcome, not on a bare status number.
+
+| method | `strictStatus` off (the default) | `strictStatus` on |
+|---|---|---|
+| `keys()` | `[]` for an empty collection **and** for a failure | `[]` only for an empty collection; a failure throws |
+| `read(key)` | the object, or `undefined` for a failure | the object, `undefined` only when datasetd says 404, any other failure throws |
+| `create`, `update`, `delete` | `true` or `false` | `true`, or a throw (`conflict` for a repeated create, `not_found` for an update or delete of a key that is not there) |
+| `query(name, fields, kv)` | the results (an empty result is `[]`), or `undefined` for a failure | the results (`[]` for an empty result); a failure throws (`not_found` for a query name that is not defined, `invalid` for a bad parameter) |
+| no answer at all (datasetd is down) | the `fetch` error as it is | a `DatasetError` with the outcome `unavailable` |
+
+`DatasetApiClient` always answers with the raw `Response`; the option does not change it.
+
+### The client and the server are set separately
+
+The strict behaviours above go with a datasetd started with `strict_status: true` in its [YAML settings](https://software.library.caltech.edu/dataset/datasetd_yaml.5.html) (dataset 2.5.2 and later). The two settings are independent:
+
+| client `strictStatus` | datasetd `strict_status` | result |
+|---|---|---|
+| off | off | as ts_dataset 0.0.4 and datasetd 2.5.1 |
+| off | on | works. A refused request (404, 409, ...) is `false` or `undefined`, as failures always were |
+| on | on | the intended behaviour |
+| on | off | **misleads**: datasetd still answers a missing key with 200 and `{}`, so `read()` returns `{}` and a repeated `create()` overwrites and says `true` |
+
+`await ds.checkStrict()` finds out which you have. It reads a key that cannot exist: a strict datasetd answers 404, one that is not strict answers 200. It returns `true` or `false`, and when the client is strict and datasetd is not it throws a `DatasetError` with the outcome `unexpected`. It is never called for you, so creating a `Dataset` never makes a request; call it once at start up.
+
+## Versions
+
+ts_dataset's major and minor version match dataset's, so the number says what is expected to work together: ts_dataset 2.5.x needs dataset 2.5.x. The patch number may differ, so a fix to this module alone is 2.5.3 with no dataset release.
 
 ## Run demo
 
