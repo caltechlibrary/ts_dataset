@@ -1,21 +1,30 @@
+
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
-title: "ts_dataset"
-abstract: "A TypeScript module for interacting with datasetd"
+title: ts_dataset
+abstract: |-
+  A TypeScript module for interacting with datasetd
 authors:
   - family-names: Doiel
     given-names: R. S.
-    orcid: "https://orcid.org/0000-0003-0900-6903"
+    orcid: https://orcid.org/0000-0003-0900-6903
+    email: rsdoiel@caltech.edu
 
-
-maintainers:
+contacts:
   - family-names: Doiel
     given-names: R. S.
-    orcid: "https://orcid.org/0000-0003-0900-6903"
+    orcid: https://orcid.org/0000-0003-0900-6903
+    email: rsdoiel@caltech.edu
 
 repository-code: "https://github.com/caltechlibrary/ts_dataset"
 version: 2.5.2
-license-url: "https://github.com/caltechlibrary/ts_dataset/blob/main/LICENSE"
-keywords: [ "software", "library", "typescript", "dataset" ]
 date-released: 2026-11-13
+doi: ts_dataset
+license-url: "https://github.com/caltechlibrary/ts_dataset/blob/main/LICENSE"
+keywords:
+  - software
+  - library
+  - typescript
+  - dataset
+
