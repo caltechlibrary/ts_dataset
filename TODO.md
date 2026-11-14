@@ -11,6 +11,15 @@ D
 Bugs
 ----
 
+- [ ] The site is still the committed HTML (`CHANGES.html`, `index.html` and the others, deployed by
+      `.github/workflows/static.yml`, with the old `publish.bash` for gh-pages). Workspace DR-0010 moves generated
+      HTML out of the repositories, built in CI from caltechlibrary/workflows. Do that migration in its own
+      change: it needs the docs workflow added before the HTML is untracked, or the published site goes stale.
+      Until then `make website` and `make docs` are explicit targets, not part of `make` or `make release`.
+
+- [ ] `deno fmt --check` lists `version.ts`, `dataset_test.ts` and `demo_ts_dataset.ts` as unformatted (`make check`
+      prints them). Reformat each in a commit of its own, not as a side effect of other work.
+
 - [X] Done for 2.5.2 as the opt-in `strictStatus` option (default off, so COLD and the other callers see no
       change); making it the default, and the audit of COLD's call sites it needs first, are not done. See
       `agents/projects/ts_dataset/decisions/0001-*.md`. Every method in the high-level `Dataset` class collapses a failed

@@ -17,6 +17,14 @@
 - Tests run against a real datasetd in all four combinations of client and server mode (`deno task test`;
   `testutil.ts` starts datasetd). The old test that needs a hand-started datasetd is `deno task test_external`.
 - Documented that an empty result is `[]` and a failure is not (README, "HTTP status and the strictStatus option").
+- Build and release brought to the workspace's current practice (workspace DR-0017, ts_dataset DR-0002): a plain
+  `make` only type-checks (`make check`) and no longer runs pandoc or the website build; `make generate`
+  regenerates `version.ts` and `CITATION.cff` with `cmt`; `make release` regenerates, runs the tests, builds a
+  source zip in `dist/` and runs `release-check`, which stops if anything does not carry the version and the
+  commit hash; `release.bash` and `release.ps1` are the shared scripts, tested by `release_test.bash`
+  (`make test-release`). `version.ts` is now the generated form (`version`, `releaseDate`, `releaseHash`);
+  the old hand-written `appInfo` and `fmtHelp` were not used by anything.
+- Fixed `demo_ts_dataset.ts`, which imported `./mods.ts` (the module is `mod.ts`), found by the new type check.
 
 (Versions 0.0.2 to 0.0.4 were not recorded here.)
 

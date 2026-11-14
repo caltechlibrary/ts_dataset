@@ -85,7 +85,8 @@ export * from "https://software.library.caltech.edu/ts_dataset/mod.ts";
 - [deno](https://deno.land) >= 1.44
 - To run the tests (`deno task test`) you need `dataset` and `datasetd` 2.5.2 or later on your `PATH` (or named in the `DATASET` and `DATASETD` environment variables); the tests start their own datasetd on a free port
 - [tmux](https://github.com/tmux/tmux/wiki) (recommended for running the demo)
-- To generation or release ts_dataset you need the following
+- To release ts_dataset (`make release`, then `./release.bash`) you need git, GNU Make, deno, zip, `cmt`, `jq` and the GitHub CLI (`gh`)
+- To generate the website you need the following
   - [Pandoc](https://pandoc.org) > 3.1
   - [GNU Make](https://www.gnu.org/software/make/)
   - [PageFind](https://pagefind.app)

@@ -52,7 +52,7 @@
   "url": "https://github.com/caltechlibrary/ts_dataset",
   "codeRepository": "https://github.com/caltechlibrary/ts_dataset",
   "readme": "https://github.com/caltechlibrary/ts_dataset/blob/main/README.md",
-  "releaseNotes": "https://github.com/caltechlibrary/ts_dataset/blob/main/CHANGES.md",
+  "releaseNotes": "- Version now tracks dataset (2.5.x needs dataset 2.5.x)\n- Added the strictStatus option: off keeps the 0.0.4 behaviour, on throws a DatasetError and goes with datasetd strict_status: true\n- Added checkStrict() and the datasetd_status.ts module (outcomeFromStatus, DatasetError)\n- Build and release follow the workspace practice: make generate, make release with release-check, the shared release.bash and release.ps1",
   "issueTracker": "https://github.com/caltechlibrary/ts_dataset/issues",
   "downloadUrl": "https://github.com/caltechlibrary/ts_dataset/archive/main.zip",
   "softwareHelp": "https://software.library.caltech.edu/ts_typescript",

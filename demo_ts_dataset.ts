@@ -34,8 +34,8 @@
  *
  */
 
-/* import { Dataset } from "https://caltechlibrary.github.io/ts_dataset/mods.ts"; */
-import { Dataset } from "./mods.ts"
+/* import { Dataset } from "https://caltechlibrary.github.io/ts_dataset/mod.ts"; */
+import { Dataset } from "./mod.ts"
 
 const port = 8485;
 const c_name = "my_objects.ds";
